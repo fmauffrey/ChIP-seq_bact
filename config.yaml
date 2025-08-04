@@ -1,0 +1,8 @@
+input_files: 
+  - raw_data/*.csv
+output_files: 
+  - processed_data/*.csv
+parameters:
+  threshold: 0.5
+  max_iterations: 100
+  log_level: "INFO"
