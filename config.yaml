@@ -1,2 +1,7 @@
 input_samples: 
   - SRR12224946
+fastp:
+  qualified_quality_phred: 15
+  unqualified_percent_limit: 40
+  average_qual: 0
+  length_limit: 0
