@@ -35,8 +35,8 @@ A too high coverage can lead to many peaks called and this can easily occur with
 
 2. **Set up the conda environment**:
    ```
-   conda env create -f envs/environment.yaml
-   conda activate <environment-name>
+   conda env create --name chip-seq --file=envs/environment.yaml
+   conda activate chip-seq
    ```
 
 3. **Configure the pipeline**:

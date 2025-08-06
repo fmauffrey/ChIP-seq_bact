@@ -5,7 +5,7 @@ configfile: "config.yaml"
 rule run:
     message: "Starting the pipeline"
     input:
-        expand("{sample}/{sample}_fastqc.zip", sample=config["input_samples"])
+        expand("{sample}/{sample}-1_fastqc.zip", sample=config["input_samples"])
 
 # Reads quality check with FastQC
 rule fastqc:
@@ -13,9 +13,10 @@ rule fastqc:
     input: 
         "data/{sample}-1.fq",
         "data/{sample}-2.fq"
-    output: "{sample}/{sample}_fastqc.zip"
+    output: 
+        "{sample}/{sample}-1_fastqc.zip",
+        "{sample}/{sample}-2_fastqc.zip"
     container: "docker://staphb/fastqc"
     threads: 1
     shell:
-        "mkdir {wildcards.sample};"
         "fastqc {input} -o {wildcards.sample}"

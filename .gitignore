@@ -1,3 +1,8 @@
 data/PA01_GCF_000006765.fa
 data/PA01_GCF_000006765.gff
 data/PA01_GCF_000006765.gtf
+.snakemake
+.java
+.cache
+SRR12224946-1.fq
+SRR12224946-2.fq
