@@ -10,7 +10,9 @@ This project is a Snakemake pipeline designed for the analysis of ChIP-seq data.
 - Comparison between samples (Deseq2)
 
 ## Other possible steps
-
+- Motif discovery (RSAT software, peak-motifs command)
+- Comparison between peaks and known TFBS
+- Web app for exploring results
 
 ## Tips
 A too high coverage can lead to many peaks called and this can easily occur with bacteria genomes. Try to subsample in order to get about 1 fold genome coverage, or between 1-10 fold.
