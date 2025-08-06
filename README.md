@@ -1,6 +1,19 @@
 # Snakemake Pipeline
 
-This project is a Snakemake pipeline designed for data processing. It provides a structured workflow to automate the execution of data analysis tasks.
+This project is a Snakemake pipeline designed for the analysis of ChIP-seq data. The pipeline aimed at being simple and straightforward.
+
+## Steps and tools
+- Quality control (FastQC + fastp)
+- Reads mapping (Bowtie2)
+- Peak calling (MACS3) Careful parameters optimization is required
+- Peak annotation (Homer)
+- Comparison between samples (Deseq2)
+
+## Other possible steps
+
+
+## Tips
+A too high coverage can lead to many peaks called and this can easily occur with bacteria genomes. Try to subsample in order to get about 1 fold genome coverage, or between 1-10 fold.
 
 ## Project Structure
 
