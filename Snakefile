@@ -17,8 +17,8 @@ rule fastp:
     output: 
         R1 = "{sample}/{sample}-1_fastp.fastq",
         R2 = "{sample}/{sample}-2_fastp.fastq",
-        html = "02-Fastp/{sample}_fastp.html",
-        json = "02-Fastp/{sample}_fastp.json"
+        html = "{sample}/{sample}_fastp.html",
+        json = "{sample}/{sample}_fastp.json"
     log: "{sample}/{sample}_fastp_log.txt"
     container: "docker://staphb/fastp"
     threads: 1
