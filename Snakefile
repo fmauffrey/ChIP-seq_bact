@@ -5,7 +5,8 @@ configfile: "config.yaml"
 rule qc:
     message: "Starting quality control and trimming"
     input:
-        expand("{sample}/{sample}-1_fastp.fastq", sample=config["input_samples"])
+        expand("{sample}/{sample}-1_fastp.fastq", sample=config["input_samples"]),
+        expand("{sample}/{sample}-1_fastp_fastqc.zip", sample=config["input_samples"]),
 
 # Reads quality control with Fastp
 rule fastp:
@@ -37,8 +38,8 @@ rule fastqc:
         "{sample}/{sample}-1_fastp.fastq",
         "{sample}/{sample}-2_fastp.fastq"
     output: 
-        "{sample}/{sample}-1_fastqc.zip",
-        "{sample}/{sample}-2_fastqc.zip"
+        "{sample}/{sample}-1_fastp_fastqc.zip",
+        "{sample}/{sample}-2_fastp_fastqc.zip"
     container: "docker://staphb/fastqc"
     threads: 1
     shell:
