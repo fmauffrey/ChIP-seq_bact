@@ -1,5 +1,6 @@
 input_samples: 
   - SRR12224946
+reference_genome: PA01_GCF_000006765
 fastp:
   qualified_quality_phred: 15
   unqualified_percent_limit: 40
