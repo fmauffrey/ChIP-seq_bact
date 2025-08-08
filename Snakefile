@@ -1,25 +1,11 @@
 # Config file with run parameters
 configfile: "config.yaml"
 
-# Run the pipeline on all samples listed in the config file
-rule run:
-    message: "Starting the pipeline"
+# Run quality control and trimming pipeline
+rule qc:
+    message: "Starting quality control and trimming"
     input:
         expand("{sample}/{sample}-1_fastp.fastq", sample=config["input_samples"])
-
-# Reads quality check with FastQC
-rule fastqc:
-    message: "FastQC: {wildcards.sample}"
-    input: 
-        "data/{sample}-1.fq",
-        "data/{sample}-2.fq"
-    output: 
-        "{sample}/{sample}-1_fastqc.zip",
-        "{sample}/{sample}-2_fastqc.zip"
-    container: "docker://staphb/fastqc"
-    threads: 1
-    shell:
-        "fastqc {input} -o {wildcards.sample}"
 
 # Reads quality control with Fastp
 rule fastp:
@@ -43,3 +29,18 @@ rule fastp:
     shell:
         "fastp -i {input.R1} -I {input.R2} -o {output.R1} -O {output.R2} -q {params.qual} "
         "-u {params.unqual} -e {params.ave_qual} -l {params.length} -h {output.html} -j {output.json} 2> {log}"
+
+# Reads quality check with FastQC
+rule fastqc:
+    message: "FastQC: {wildcards.sample}"
+    input: 
+        "{sample}/{sample}-1_fastp.fastq",
+        "{sample}/{sample}-2_fastp.fastq"
+    output: 
+        "{sample}/{sample}-1_fastqc.zip",
+        "{sample}/{sample}-2_fastqc.zip"
+    container: "docker://staphb/fastqc"
+    threads: 1
+    shell:
+        "fastqc {input} -o {wildcards.sample}"
+
