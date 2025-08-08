@@ -42,10 +42,10 @@ A too high coverage can lead to many peaks called and this can easily occur with
 3. **Configure the pipeline**:
    Edit the `config.yaml` file to set your parameters.
 
-4. **Run the pipeline**:
-   Execute the following command to start the Snakemake workflow:
+4. **Run the QC steps**:
+   Execute the following command to start QC analysis:
    ```
-   snakemake --cores <number-of-cores>
+   snakemake qc --cores <number-of-cores> --use-singularity
    ```
 
 ## Additional Information
