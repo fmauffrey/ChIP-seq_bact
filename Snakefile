@@ -6,7 +6,13 @@ rule qc:
     message: "Starting quality control and trimming"
     input:
         expand("{sample}/{sample}-1_fastp.fastq", sample=config["input_samples"]),
-        expand("{sample}/{sample}-1_fastp_fastqc.zip", sample=config["input_samples"]),
+        expand("{sample}/{sample}-1_fastp_fastqc.zip", sample=config["input_samples"])
+
+# Rule to analysis samples
+rule analysis:
+    message: "Starting the analysis pipeline"
+    input:
+        expand("{sample}/{sample}.sam", sample=config["input_samples"])
 
 # Reads quality control with Fastp
 rule fastp:
@@ -45,3 +51,30 @@ rule fastqc:
     shell:
         "fastqc {input} -o {wildcards.sample}"
 
+# Indexing reference genome with Bowtie2
+rule bowtie2_index:
+    message: "Indexing genome with bowtie2"
+    input: f"data/{config['reference_genome']}.fa"
+    output: f"data/{config['reference_genome']}/{config['reference_genome']}.1.bt2"
+    container: "docker://staphb/bowtie2"
+    threads: 1
+    shell:
+        f"bowtie2-build {input} data/{config['reference_genome']}/{config['reference_genome']}"
+
+
+# Reads mapping with bowtie2
+rule bowtie2_align:
+    message: "Bowtie2: {wildcards.sample}"
+    input: 
+        R1="{sample}/{sample}-1_fastp.fastq",
+        R2="{sample}/{sample}-2_fastp.fastq",
+        index=f"data/{config['reference_genome']}/{config['reference_genome']}.1.bt2"
+    output: 
+        "{sample}/{sample}.sam"
+    log: "{sample}/{sample}_bowtie2.log"
+    container: "docker://staphb/bowtie2"
+    threads: 2
+    shell:
+        "bowtie2 -x data/{config[reference_genome]}/{config[reference_genome]} -1 {input.R1} -2 {input.R2} "
+        "-S {output} --threads {threads} --no-unal --no-mixed --no-discordant "
+        "2> {log}"
