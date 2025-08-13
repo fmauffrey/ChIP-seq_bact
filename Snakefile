@@ -1,28 +1,26 @@
 # Config file with run parameters
 configfile: "config.yaml"
 
-all_samples = config["input_samples"]
-all_samples.append(config["control"])
 ref_genome = config["reference_genome"]
 
 # Run quality control and trimming pipeline
 rule qc:
     message: "Starting quality control and trimming"
     input:
-        expand("results/{sample}/QC/{sample}_fastp.fastq", sample=all_samples),
-        expand("results/{sample}/QC/{sample}_fastp_fastqc.zip", sample=all_samples)
+        expand("results/{sample}/QC/{sample}_fastp.fastq", sample=config["input_samples"]),
+        expand("results/{sample}/QC/{sample}_fastp_fastqc.zip", sample=config["input_samples"])
 
 # Rule to align reads on genome
 rule align:
     message: "Starting the analysis pipeline"
     input:
-        expand("results/{sample}/Align/{sample}.bam", sample=all_samples)
+        expand("results/{sample}/Align/{sample}.bam", sample=config["input_samples"])
 
 # Rule to call peaks
 rule call_peaks:
     message: "Starting peak calling"
     input:
-        expand("results/{sample_to_test}/Peaks/{sample_to_test}_peaks.narrowPeak", sample_to_test=config["input_samples"])
+        expand("results/{sample}/Peaks/{sample}_peaks.narrowPeak", sample=config["input_samples"])
 
 # Reads quality control with Fastp
 rule fastp:
@@ -96,15 +94,15 @@ rule samtools_view:
 
 # Peak calling with MACS3
 rule macs3:
-    message: "MACS3: {wildcards.sample_to_test}"
-    input: "results/{sample_to_test}/Align/{sample_to_test}.bam"
-    output: "results/{sample_to_test}/Peaks/{sample_to_test}_peaks.narrowPeak"
-    log: "results/{sample_to_test}/Peaks/{sample_to_test}_macs3.log"
+    message: "MACS3: {wildcards.sample}"
+    input: "results/{sample}/Align/{sample}.bam"
+    output: "results/{sample}/Peaks/{sample}_peaks.narrowPeak"
+    log: "results/{sample}/Peaks/{sample}_macs3.log"
     threads: 2
     params:
         control=config["control"],
         genome_size=config["genome_size"],
         qvalue=config["macs3"]["qvalue"]
     shell:
-        "macs3 callpeak -t {input} -c results/{params.control}/Align/{params.control}.bam -n {wildcards.sample_to_test} "
-        "--outdir results/{wildcards.sample_to_test}/Peaks --nomodel -f BAM -g {params.genome_size} -B -q {params.qvalue} 2> {log}"
+        "macs3 callpeak -t {input} -c results/{params.control}/Align/{params.control}.bam -n {wildcards.sample} "
+        "--outdir results/{wildcards.sample}/Peaks --nomodel -f BAM -g {params.genome_size} -B -q {params.qvalue} 2> {log}"

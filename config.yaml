@@ -1,6 +1,7 @@
 input_samples: 
   - GFY-6_R1
   - GFY-7_R1
+  - GFY-8_R1
 control: GFY-8_R1
 genome_size: 6264404
 reference_genome: ASM676v1
