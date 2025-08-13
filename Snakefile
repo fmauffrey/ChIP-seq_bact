@@ -46,7 +46,7 @@ rule fastqc:
     container: "docker://staphb/fastqc"
     threads: 1
     shell:
-        "fastqc {input} -o {wildcards.sample}"
+        "fastqc {input} -o results/{wildcards.sample}"
 
 # Indexing reference genome with Bowtie2
 rule bowtie2_index:
