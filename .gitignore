@@ -1,11 +1,5 @@
 .snakemake
 .java
 .cache
-SRR12224946-1.fq
-SRR12224946-2.fq
-data/ASM676v1.gff
-data/GFY-7_R1.fastq
-data/GFY-8_R1.fastq
-data/GFY-6_R1.fastq
-data/ASM676v1.gtf
-data/ASM676v1.fa
+results
+data
