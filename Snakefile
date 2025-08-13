@@ -101,8 +101,10 @@ rule macs3:
     threads: 2
     params:
         control=config["control"],
-        genome_size=config["genome_size"],
-        qvalue=config["macs3"]["qvalue"]
+        genome_size=config["macs3"]["genome_size"],
+        qvalue=config["macs3"]["qvalue"],
+        frag_length=config["macs3"]["fragment_length"]
     shell:
         "macs3 callpeak -t {input} -c results/{params.control}/Align/{params.control}.bam -n {wildcards.sample} "
-        "--outdir results/{wildcards.sample}/Peaks --nomodel -f BAM -g {params.genome_size} -B -q {params.qvalue} 2> {log}"
+        "--outdir results/{wildcards.sample}/Peaks --nomodel --extsize {frag_length} -f BAM -g {params.genome_size} "
+        "-B -q {params.qvalue} 2> {log}"

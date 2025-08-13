@@ -5,8 +5,8 @@ This project is a Snakemake pipeline designed for the analysis of ChIP-seq data.
 ## Steps and tools
 - Quality control (FastQC + fastp)
 - Reads mapping (Bowtie2, Samtools)
-- Peak calling (MACS3) Careful parameters optimization is required
-- Peak annotation (Homer)
+- Peak calling (MACS3) --nomodel is used since macs3 is not able to derive models from these data. A fragment size of around 200 pb is obtained after sonication so --extsize
+- Peak annotation (Homer or ChIPpeakAnno)
 - Comparison between samples (Deseq2)
 
 ## Other possible steps

@@ -3,7 +3,6 @@ input_samples:
   - GFY-7_R1
   - GFY-8_R1
 control: GFY-8_R1
-genome_size: 6264404
 reference_genome: ASM676v1
 fastp:
   qualified_quality_phred: 15
@@ -12,3 +11,5 @@ fastp:
   length_limit: 0
 macs3:
   qvalue: 0.01
+  fragment_length: 200
+  genome_size: 6264404
