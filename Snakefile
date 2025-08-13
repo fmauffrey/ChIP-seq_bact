@@ -68,7 +68,7 @@ rule bowtie2_align:
     input: 
         fastq="results/{sample}/{sample}_fastp.fastq",
         index="data/{ref}/{ref}.1.bt2".format(ref=ref_genome)
-    output: "results/{sample}/{sample}.sam"
+    output: "results/{sample}/{sample}.bam"
     log: "results/{sample}/{sample}_bowtie2.log"
     container: "docker://staphb/bowtie2"
     threads: 2
@@ -76,15 +76,15 @@ rule bowtie2_align:
         ref_genome=ref_genome
     shell:
         "bowtie2 -x data/{ref_genome}/{ref_genome} -1 {input.fastq} "
-        "-S {output} --threads {threads} --no-unal --no-mixed --no-discordant 2> {log}"
+        "-b {output} --threads {threads} --no-unal --no-mixed --no-discordant 2> {log}"
 
 # Peak calling with MACS3
 rule macs3:
     message: "MACS3: {wildcards.sample}"
-    input: "results/{sample}/{sample}.sam"
+    input: "results/{sample}/{sample}.bam"
     output: "results/{sample}/{sample}_peaks.narrowPeak"
     log: "results/{sample}/{sample}_macs3.log"
     threads: 2
     shell:
-        "macs3 callpeak -t {input} -f SAM -g hs -n results/{wildcards.sample} --outdir results/{wildcards.sample} "
+        "macs3 callpeak -t {input} -f BAM -g hs -n results/{wildcards.sample} --outdir results/{wildcards.sample} "
         "--nomodel --shift -100 --extsize 200 --keep-dup all 2> {log}"
