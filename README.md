@@ -4,7 +4,7 @@ This project is a Snakemake pipeline designed for the analysis of ChIP-seq data.
 
 ## Steps and tools
 - Quality control (FastQC + fastp)
-- Reads mapping (Bowtie2)
+- Reads mapping (Bowtie2, Samtools)
 - Peak calling (MACS3) Careful parameters optimization is required
 - Peak annotation (Homer)
 - Comparison between samples (Deseq2)
@@ -46,6 +46,18 @@ A too high coverage can lead to many peaks called and this can easily occur with
    Execute the following command to start QC analysis:
    ```
    snakemake qc --cores <number-of-cores> --use-singularity
+   ```
+
+5. **Run the alignment steps**:
+   Execute the following command to start reads alignment:
+   ```
+   snakemake align --cores <number-of-cores> --use-singularity
+   ```
+
+6. **Run the peaks calling steps**:
+   Execute the following command to start reads alignment:
+   ```
+   snakemake call_peaks --cores <number-of-cores> --use-singularity
    ```
 
 ## Additional Information
