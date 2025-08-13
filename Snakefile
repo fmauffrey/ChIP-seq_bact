@@ -48,38 +48,37 @@ rule fastqc:
 # Indexing reference genome with Bowtie2
 rule bowtie2_index:
     message: "Indexing genome with bowtie2"
-    input: f"data/{config['reference_genome']}.fa"
-    output: f"data/{config['reference_genome']}/{config['reference_genome']}.1.bt2"
+    input: "data/{params.ref_genome}.fa"
+    output: "data/{params.ref_genome}/{params.ref_genome}.1.bt2"
     container: "docker://staphb/bowtie2"
     threads: 1
+    params:
+        ref_genome = config["reference_genome"]
     shell:
-        f"bowtie2-build {input} data/{config['reference_genome']}/{config['reference_genome']}"
+        "bowtie2-build {input} data/{params.ref_genome}/{params.ref_genome}"
 
 
 # Reads mapping with bowtie2
 rule bowtie2_align:
     message: "Bowtie2: {wildcards.sample}"
     input: 
-        R1="{sample}/{sample}-1_fastp.fastq",
-        R2="{sample}/{sample}-2_fastp.fastq",
-        index=f"data/{config['reference_genome']}/{config['reference_genome']}.1.bt2"
-    output: 
-        "{sample}/{sample}.sam"
+        fastq="{sample}/{sample}_fastp.fastq",
+        index="data/{params.ref_genome}/{params.ref_genome}.1.bt2"
+    output: "{sample}/{sample}.sam"
     log: "{sample}/{sample}_bowtie2.log"
     container: "docker://staphb/bowtie2"
     threads: 2
+    params:
+        ref_genome = config["reference_genome"]
     shell:
-        "bowtie2 -x data/{config[reference_genome]}/{config[reference_genome]} -1 {input.R1} -2 {input.R2} "
-        "-S {output} --threads {threads} --no-unal --no-mixed --no-discordant "
-        "2> {log}"
+        "bowtie2 -x data/{params.ref_genome}/{params.ref_genome} -1 {input.fastq} "
+        "-S {output} --threads {threads} --no-unal --no-mixed --no-discordant 2> {log}"
 
 # Peak calling with MACS3
 rule macs3:
     message: "MACS3: {wildcards.sample}"
-    input: 
-        "{sample}/{sample}.sam"
-    output: 
-        "{sample}/{sample}_peaks.narrowPeak"
+    input: "{sample}/{sample}.sam"
+    output: "{sample}/{sample}_peaks.narrowPeak"
     log: "{sample}/{sample}_macs3.log"
     threads: 2
     shell:
