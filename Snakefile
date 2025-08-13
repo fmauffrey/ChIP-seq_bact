@@ -5,14 +5,15 @@ configfile: "config.yaml"
 rule qc:
     message: "Starting quality control and trimming"
     input:
-        expand("{sample}/{sample}-1_fastp.fastq", sample=config["input_samples"]),
-        expand("{sample}/{sample}-1_fastp_fastqc.zip", sample=config["input_samples"])
+        expand("{sample}/{sample}-1_fastp.fastq", sample=config["input_samples"]+config["control"]),
+        expand("{sample}/{sample}-1_fastp_fastqc.zip", sample=config["input_samples"]+config["control"])
 
 # Rule to analysis samples
 rule analysis:
     message: "Starting the analysis pipeline"
     input:
-        expand("{sample}/{sample}.sam", sample=config["input_samples"])
+        expand("{sample}/{sample}.sam", sample=config["input_samples"]+config["control"]),
+        expand("{sample}/{sample}_peaks.narrowPeak", sample=config["input_samples"])
 
 # Reads quality control with Fastp
 rule fastp:
@@ -78,3 +79,16 @@ rule bowtie2_align:
         "bowtie2 -x data/{config[reference_genome]}/{config[reference_genome]} -1 {input.R1} -2 {input.R2} "
         "-S {output} --threads {threads} --no-unal --no-mixed --no-discordant "
         "2> {log}"
+
+# Peak calling with MACS3
+rule macs3:
+    message: "MACS3: {wildcards.sample}"
+    input: 
+        "{sample}/{sample}.sam"
+    output: 
+        "{sample}/{sample}_peaks.narrowPeak"
+    log: "{sample}/{sample}_macs3.log"
+    threads: 2
+    shell:
+        "macs3 callpeak -t {input} -f SAM -g hs -n {wildcards.sample} --outdir {wildcards.sample} "
+        "--nomodel --shift -100 --extsize 200 --keep-dup all 2> {log}"

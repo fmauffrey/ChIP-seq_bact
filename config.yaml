@@ -1,5 +1,7 @@
 input_samples: 
-  - SRR12224946
+  - GFY-6_R1
+  - GFY-7_R1
+control: GFY-8_R1
 reference_genome: PA01_GCF_000006765
 fastp:
   qualified_quality_phred: 15
