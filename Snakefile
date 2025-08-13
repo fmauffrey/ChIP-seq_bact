@@ -1,26 +1,29 @@
 # Config file with run parameters
 configfile: "config.yaml"
 
+all_samples = config["input_samples"]
+all_samples.append(config["control"])
+
 # Run quality control and trimming pipeline
 rule qc:
     message: "Starting quality control and trimming"
     input:
-        expand("{sample}/{sample}_fastp.fastq", sample=config["input_samples"]+config["control"]),
-        expand("{sample}/{sample}_fastp_fastqc.zip", sample=config["input_samples"]+config["control"])
+        expand("{sample}/{sample}_fastp.fastq", sample=all_samples),
+        expand("{sample}/{sample}_fastp_fastqc.zip", sample=all_samples)
 
 # Rule to analysis samples
 rule analysis:
     message: "Starting the analysis pipeline"
     input:
-        expand("{sample}/{sample}.sam", sample=config["input_samples"]+config["control"]),
+        expand("{sample}/{sample}.sam", sample=all_samples),
         expand("{sample}/{sample}_peaks.narrowPeak", sample=config["input_samples"])
 
 # Reads quality control with Fastp
 rule fastp:
     message: "Fastp: {wildcards.sample}"
-    input: "data/{sample}.fq"
+    input: "data/{sample}.fastq"
     output: 
-        fastq = "{sample}/{sample}-1_fastp.fastq",
+        fastq = "{sample}/{sample}_fastp.fastq",
         html = "{sample}/{sample}_fastp.html",
         json = "{sample}/{sample}_fastp.json"
     log: "{sample}/{sample}_fastp_log.txt"
