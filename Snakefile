@@ -16,7 +16,7 @@ rule qc:
 rule align:
     message: "Starting the analysis pipeline"
     input:
-        expand("results/{sample}/Align/{sample}.sam", sample=all_samples)
+        expand("results/{sample}/Align/{sample}.bam", sample=all_samples)
 
 # Rule to call peaks
 rule call_peaks:
@@ -88,11 +88,10 @@ rule samtools_view:
     message: "Samtools view: {wildcards.sample}"
     input: "results/{sample}/Align/{sample}.sam"
     output: "results/{sample}/Align/{sample}.bam"
-    log: "results/{sample}/Align/{sample}_samtools_view.log"
     container: "docker://staphb/samtools"
     threads: 2
     shell:
-        "samtools view -bS {input} -o {output} 2> {log} && "
+        "samtools view -bS {input} -o {output} && "
         "rm {input}"
 
 # Peak calling with MACS3
