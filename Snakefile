@@ -106,5 +106,5 @@ rule macs3:
         frag_length=config["macs3"]["fragment_length"]
     shell:
         "macs3 callpeak -t {input} -c results/{params.control}/Align/{params.control}.bam -n {wildcards.sample} "
-        "--outdir results/{wildcards.sample}/Peaks --nomodel --extsize {frag_length} -f BAM -g {params.genome_size} "
+        "--outdir results/{wildcards.sample}/Peaks --nomodel --extsize {params.frag_length} -f BAM -g {params.genome_size} "
         "-B -q {params.qvalue} 2> {log}"
