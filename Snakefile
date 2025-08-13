@@ -12,11 +12,16 @@ rule qc:
         expand("results/{sample}/QC/{sample}_fastp.fastq", sample=all_samples),
         expand("results/{sample}/QC/{sample}_fastp_fastqc.zip", sample=all_samples)
 
-# Rule to analysis samples
-rule analysis:
+# Rule to align reads on genome
+rule align:
     message: "Starting the analysis pipeline"
     input:
-        expand("results/{sample}/Analysis/{sample}.sam", sample=all_samples),
+        expand("results/{sample}/Analysis/{sample}.sam", sample=all_samples)
+
+# Rule to call peaks
+rule call_peaks:
+    message: "Starting peak calling"
+    input:
         expand("results/{sample}/Analysis/{sample}_peaks.narrowPeak", sample=config["input_samples"])
 
 # Reads quality control with Fastp
@@ -78,13 +83,26 @@ rule bowtie2_align:
         "bowtie2 -x data/{ref_genome}/{ref_genome} -U {input.fastq} "
         "-S {output} --threads {threads} --no-unal --no-mixed --no-discordant 2> {log}"
 
+# Convert SAM to BAM
+rule samtools_view:
+    message: "Samtools view: {wildcards.sample}"
+    input: "results/{sample}/Analysis/{sample}.sam"
+    output: "results/{sample}/Analysis/{sample}.bam"
+    log: "results/{sample}/Analysis/{sample}_samtools_view.log"
+    container: "docker://staphb/samtools"
+    threads: 2
+    shell:
+        "samtools view -bS {input} -o {output} 2> {log} && "
+        "rm {input}"
+
 # Peak calling with MACS3
 rule macs3:
     message: "MACS3: {wildcards.sample}"
-    input: "results/{sample}/Analysis/{sample}.sam"
+    input: "results/{sample}/Analysis/{sample}.bam"
     output: "results/{sample}/Analysis/{sample}_peaks.narrowPeak"
     log: "results/{sample}/Analysis/{sample}_macs3.log"
     threads: 2
+    params:
+        control=config["control"]
     shell:
-        "macs3 callpeak -t {input} -f SAM -g hs -n results/{wildcards.sample}/Analysis --outdir results/{wildcards.sample}/Analysis "
-        "--nomodel --shift -100 --extsize 200 --keep-dup all 2> {log}"
+        "macs3 callpeak -t {input} -c {control} -f BAM -g hs -n results/{wildcards.sample}/Analysis -B -q 0.01 2> {log}"
