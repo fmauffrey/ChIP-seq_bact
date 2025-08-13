@@ -16,13 +16,13 @@ rule qc:
 rule align:
     message: "Starting the analysis pipeline"
     input:
-        expand("results/{sample}/Analysis/{sample}.sam", sample=all_samples)
+        expand("results/{sample}/Align/{sample}.sam", sample=all_samples)
 
 # Rule to call peaks
 rule call_peaks:
     message: "Starting peak calling"
     input:
-        expand("results/{sample}/Analysis/{sample}_peaks.narrowPeak", sample=config["input_samples"])
+        expand("results/{sample}/Peaks/{sample}_peaks.narrowPeak", sample=config["input_samples"])
 
 # Reads quality control with Fastp
 rule fastp:
@@ -73,8 +73,8 @@ rule bowtie2_align:
     input: 
         fastq="results/{sample}/QC/{sample}_fastp.fastq",
         index="data/{ref}/{ref}.1.bt2".format(ref=ref_genome)
-    output: "results/{sample}/Analysis/{sample}.sam"
-    log: "results/{sample}/Analysis/{sample}_bowtie2.log"
+    output: "results/{sample}/Align/{sample}.sam"
+    log: "results/{sample}/Align/{sample}_bowtie2.log"
     container: "docker://staphb/bowtie2"
     threads: 2
     params:
@@ -86,9 +86,9 @@ rule bowtie2_align:
 # Convert SAM to BAM
 rule samtools_view:
     message: "Samtools view: {wildcards.sample}"
-    input: "results/{sample}/Analysis/{sample}.sam"
-    output: "results/{sample}/Analysis/{sample}.bam"
-    log: "results/{sample}/Analysis/{sample}_samtools_view.log"
+    input: "results/{sample}/Align/{sample}.sam"
+    output: "results/{sample}/Align/{sample}.bam"
+    log: "results/{sample}/Align/{sample}_samtools_view.log"
     container: "docker://staphb/samtools"
     threads: 2
     shell:
@@ -98,11 +98,11 @@ rule samtools_view:
 # Peak calling with MACS3
 rule macs3:
     message: "MACS3: {wildcards.sample}"
-    input: "results/{sample}/Analysis/{sample}.bam"
-    output: "results/{sample}/Analysis/{sample}_peaks.narrowPeak"
-    log: "results/{sample}/Analysis/{sample}_macs3.log"
+    input: "results/{sample}/Align/{sample}.bam"
+    output: "results/{sample}/Peaks/{sample}_peaks.narrowPeak"
+    log: "results/{sample}/Peaks/{sample}_macs3.log"
     threads: 2
     params:
         control=config["control"]
     shell:
-        "macs3 callpeak -t {input} -c {control} -f BAM -g hs -n results/{wildcards.sample}/Analysis -B -q 0.01 2> {log}"
+        "macs3 callpeak -t {input} -c {control} -f BAM -g hs -n results/{wildcards.sample}/Peaks -B -q 0.01 2> {log}"
