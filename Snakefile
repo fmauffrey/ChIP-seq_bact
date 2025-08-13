@@ -85,5 +85,5 @@ rule macs3:
     log: "results/{sample}/{sample}_macs3.log"
     threads: 2
     shell:
-        "macs3 callpeak -t {input} -f SAM -g hs -n {wildcards.sample} --outdir {wildcards.sample} "
+        "macs3 callpeak -t {input} -f SAM -g hs -n results/{wildcards.sample} --outdir results/{wildcards.sample} "
         "--nomodel --shift -100 --extsize 200 --keep-dup all 2> {log}"
