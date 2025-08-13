@@ -42,6 +42,8 @@ A too high coverage can lead to many peaks called and this can easily occur with
 3. **Configure the pipeline**:
    Edit the `config.yaml` file to set your parameters.
 
+   q-value (adjusted with BH) is used for macs3 instead if p-value
+
 4. **Run the QC steps**:
    Execute the following command to start QC analysis:
    ```

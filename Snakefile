@@ -22,7 +22,7 @@ rule align:
 rule call_peaks:
     message: "Starting peak calling"
     input:
-        expand("results/{sample}/Peaks/{sample}_peaks.narrowPeak", sample=config["input_samples"])
+        expand("results/{sample_to_test}/Peaks/{sample_to_test}_peaks.narrowPeak", sample_to_test=config["input_samples"])
 
 # Reads quality control with Fastp
 rule fastp:
@@ -73,7 +73,7 @@ rule bowtie2_align:
     input: 
         fastq="results/{sample}/QC/{sample}_fastp.fastq",
         index="data/{ref}/{ref}.1.bt2".format(ref=ref_genome)
-    output: "results/{sample}/Align/{sample}.sam"
+    output: temp("results/{sample}/Align/{sample}.sam")
     log: "results/{sample}/Align/{sample}_bowtie2.log"
     container: "docker://staphb/bowtie2"
     threads: 2
@@ -96,12 +96,15 @@ rule samtools_view:
 
 # Peak calling with MACS3
 rule macs3:
-    message: "MACS3: {wildcards.sample}"
-    input: "results/{sample}/Align/{sample}.bam"
-    output: "results/{sample}/Peaks/{sample}_peaks.narrowPeak"
-    log: "results/{sample}/Peaks/{sample}_macs3.log"
+    message: "MACS3: {wildcards.sample_to_test}"
+    input: "results/{sample_to_test}/Align/{sample_to_test}.bam"
+    output: "results/{sample_to_test}/Peaks/{sample_to_test}_peaks.narrowPeak"
+    log: "results/{sample_to_test}/Peaks/{sample_to_test}_macs3.log"
     threads: 2
     params:
-        control=config["control"]
+        control=config["control"],
+        genome_size=config["genome_size"],
+        qvalue=config["macs3"]["qvalue"]
     shell:
-        "macs3 callpeak -t {input} -c {control} -f BAM -g hs -n results/{wildcards.sample}/Peaks -B -q 0.01 2> {log}"
+        "macs3 callpeak -t {input} -c results/{params.control}/Align/{params.control}.bam -n {wildcards.sample_to_test} "
+        "--outdir results/{wildcards.sample_to_test}/Peaks --nomodel -f BAM -g {params.genome_size} -B -q {params.qvalue} 2> {log}"
