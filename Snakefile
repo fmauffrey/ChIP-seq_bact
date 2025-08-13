@@ -3,6 +3,7 @@ configfile: "config.yaml"
 
 all_samples = config["input_samples"]
 all_samples.append(config["control"])
+ref_genome = config["reference_genome"]
 
 # Run quality control and trimming pipeline
 rule qc:
@@ -51,14 +52,14 @@ rule fastqc:
 # Indexing reference genome with Bowtie2
 rule bowtie2_index:
     message: "Indexing genome with bowtie2"
-    input: "data/{params.ref_genome}.fa"
-    output: "data/{params.ref_genome}/{params.ref_genome}.1.bt2"
+    input: "data/{ref}.fa".format(ref=ref_genome)
+    output: "data/{ref}/{ref}.1.bt2".format(ref=ref_genome)
     container: "docker://staphb/bowtie2"
     threads: 1
     params:
-        ref_genome = config["reference_genome"]
+        ref_genome=ref_genome
     shell:
-        "bowtie2-build {input} data/{params.ref_genome}/{params.ref_genome}"
+        "bowtie2-build {input} data/{ref_genome}/{ref_genome}"
 
 
 # Reads mapping with bowtie2
@@ -66,15 +67,15 @@ rule bowtie2_align:
     message: "Bowtie2: {wildcards.sample}"
     input: 
         fastq="results/{sample}/{sample}_fastp.fastq",
-        index="data/{params.ref_genome}/{params.ref_genome}.1.bt2"
+        index="data/{ref}/{ref}.1.bt2".format(ref=ref_genome)
     output: "results/{sample}/{sample}.sam"
     log: "results/{sample}/{sample}_bowtie2.log"
     container: "docker://staphb/bowtie2"
     threads: 2
     params:
-        ref_genome = config["reference_genome"]
+        ref_genome=ref_genome
     shell:
-        "bowtie2 -x data/{params.ref_genome}/{params.ref_genome} -1 {input.fastq} "
+        "bowtie2 -x data/{ref_genome}/{ref_genome} -1 {input.fastq} "
         "-S {output} --threads {threads} --no-unal --no-mixed --no-discordant 2> {log}"
 
 # Peak calling with MACS3
