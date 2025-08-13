@@ -16,7 +16,7 @@ rule qc:
 rule analysis:
     message: "Starting the analysis pipeline"
     input:
-        expand("results/{sample}/{sample}.sam", sample=all_samples),
+        expand("results/{sample}/{sample}.bam", sample=all_samples),
         expand("results/{sample}/{sample}_peaks.narrowPeak", sample=config["input_samples"])
 
 # Reads quality control with Fastp
@@ -75,7 +75,7 @@ rule bowtie2_align:
     params:
         ref_genome=ref_genome
     shell:
-        "bowtie2 -x data/{ref_genome}/{ref_genome} -1 {input.fastq} "
+        "bowtie2 -x data/{ref_genome}/{ref_genome} -U {input.fastq} "
         "-b {output} --threads {threads} --no-unal --no-mixed --no-discordant 2> {log}"
 
 # Peak calling with MACS3
