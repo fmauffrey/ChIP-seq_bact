@@ -8,7 +8,7 @@ rule qc:
     message: "Starting quality control and trimming"
     input:
         expand("results/{sample}/QC/{sample}_fastp.fastq", sample=config["input_samples"]),
-        expand("results/{sample}/QC/{sample}_fastp_fastqc.zip", sample=config["input_samples"])
+        expand("results/{sample}/QC/{sample}_fastp_fastqc.html", sample=config["input_samples"])
 
 # Rule to align reads on genome
 rule align:
@@ -47,11 +47,11 @@ rule fastp:
 rule fastqc:
     message: "FastQC: {wildcards.sample}"
     input: "results/{sample}/QC/{sample}_fastp.fastq"
-    output: "results/{sample}/QC/{sample}_fastp_fastqc.zip"
+    output: "results/{sample}/QC/{sample}_fastp_fastqc.html"
     container: "docker://staphb/fastqc"
     threads: 1
     shell:
-        "fastqc {input} -o results/{wildcards.sample}/QC"
+        "fastqc {input} -o results/{wildcards.sample}/QC --extract --delete"
 
 # Indexing reference genome with Bowtie2
 rule bowtie2_index:
@@ -125,11 +125,13 @@ rule summary:
     input:
         peaks_QC=expand("results/{sample}/Align/{sample}_phantompeak.txt", sample=config["input_samples"]),
         peaks=expand("results/{sample}/Peaks/{sample}_peaks.narrowPeak", sample=config["input_samples"]),
-        bowtie2_log=expand("results/{sample}/Align/{sample}_bowtie2.log", sample=config["input_samples"])
+        bowtie2_log=expand("results/{sample}/Align/{sample}_bowtie2.log", sample=config["input_samples"]),
+        fastqc_files=expand("results/{sample}/QC/{sample}_fastp_fastqc/fastqc_data.txt", sample=config["input_samples"])
     output: 
         path="results/summary.txt"
     threads: 1
     params:
-        samples=config["input_samples"]
+        samples=config["input_samples"],
+        genome_size=config["macs3"]["genome_size"]
     script:
         "scripts/summary.py"

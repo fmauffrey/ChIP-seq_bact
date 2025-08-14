@@ -5,7 +5,7 @@ input_samples:
 control: GFY-8_R1
 reference_genome: ASM676v1
 fastp:
-  qualified_quality_phred: 15
+  qualified_quality_phred: 25
   unqualified_percent_limit: 40
   average_qual: 0
   length_limit: 0
