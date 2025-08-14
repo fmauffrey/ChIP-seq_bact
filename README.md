@@ -10,7 +10,7 @@ This project is a Snakemake pipeline designed for the analysis of ChIP-seq data.
 - Comparison between samples (Deseq2)
 
 ## Other possible steps
-- Motif discovery (RSAT software, peak-motifs command)
+- Motif discovery (RSAT software, peak-motifs command) (MEME)
 - Comparison between peaks and known TFBS
 - Web app for exploring results
 
@@ -49,6 +49,7 @@ A too high coverage can lead to many peaks called and this can easily occur with
    ```
    snakemake qc --cores <number-of-cores> --use-singularity
    ```
+   Pause and check the quality of the filtered fastq files. If OK, proceed to next step. 
 
 5. **Run the alignment steps**:
    Execute the following command to start reads alignment:
@@ -61,6 +62,7 @@ A too high coverage can lead to many peaks called and this can easily occur with
    ```
    snakemake call_peaks --cores <number-of-cores> --use-singularity
    ```
+   Pause and check the quality of the peak calling quality with tools like IGV or packages like ChIPQC (in R). If OK, proceed to next step. 
 
 ## Additional Information
 
