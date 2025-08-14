@@ -97,11 +97,10 @@ rule phantompeakqualtools:
     message: "Phantompeakqualtools: {wildcards.sample}"
     input: "results/{sample}/Align/{sample}.bam"
     output: "results/{sample}/Align/{sample}_phantompeak.txt"
-    log: "results/{sample}/Align/{sample}_phantompeak.log"
     container: "docker://seqeralabs/phantompeakqualtools"
     threads: 2
     shell:
-        "Rscript scripts/run_spp.R -c={input} -savp -out={output} 2> {log}"
+        "Rscript scripts/run_spp.R -c={input} -savp -out={output}"
 
 # Peak calling with MACS3
 rule macs3:
