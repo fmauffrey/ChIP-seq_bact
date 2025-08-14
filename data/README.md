@@ -17,14 +17,13 @@ This directory contains the data needed for the analysis. Keep a consistent name
    - **Format**: GFF (.gff)
 
 4. **Experiment data**
-   - **Description**: the data files to analyze.
-   - **Format**: Fastq (.fq)
-   - **Pairing**: add the -1 and -2 tag after the name to refer to forward and reverse, respectively.
+   - **Description**: the data files to analyze and the control sample.
+   - **Format**: Fastq (.fastq)
 
 ## Example
 
 - PA01_GCF_000006765.fa
 - PA01_GCF_000006765.gtf
 - PA01_GCF_000006765.gff
-- pseudo_TF1-1.fq
-- pseudo_TF1-2.fq
+- pseudo_TF1.fastq
+- control_TF1.fastq

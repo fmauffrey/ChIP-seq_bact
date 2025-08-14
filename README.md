@@ -2,28 +2,24 @@
 
 This project is a Snakemake pipeline designed for the analysis of ChIP-seq data. The pipeline aimed at being simple and straightforward.
 
-## Steps and tools
-- Quality control (FastQC + fastp)
-- Reads mapping (Bowtie2, Samtools)
-- Peak calling (MACS3) --nomodel is used since macs3 is not able to derive models from these data. A fragment size of around 200 pb is obtained after sonication so --extsize
+## Steps and tools included in the pipeline
+### Quality control (FastQC + fastp)
+Reads are first filtered using fastp according to the parameters in the config file. A quality control step is then performed using FastQC on the filtered files.
+
+### Reads mapping (Bowtie2, Samtools)
+
+### Peak calling (MACS3) --nomodel is used since macs3 is not able to derive models from these data. A fragment size of around 200 pb is obtained after sonication so --extsize
+
+
+## Other steps performed manually
 - Peak annotation (Homer or ChIPpeakAnno)
 - Comparison between samples (Deseq2)
-
-## Other possible steps
 - Motif discovery (RSAT software, peak-motifs command) (MEME) (Homer)
 - Comparison between peaks and known TFBS
 - Web app for exploring results
 
 ## Tips
 A too high coverage can lead to many peaks called and this can easily occur with bacteria genomes. Try to subsample in order to get about 1 fold genome coverage, or between 1-10 fold.
-
-## Project Structure
-
-- **Snakefile**: Defines the workflow, including rules, input/output files, and commands for each step.
-- **config.yaml**: Contains configuration parameters for the pipeline, allowing users to define variables used throughout the workflow.
-- **envs/environment.yaml**: Specifies the conda environment with required packages and their versions for consistent execution.
-- **scripts/process_data.py**: Implements the data processing logic, called by Snakemake rules to perform specific tasks.
-- **data/README.md**: Documentation about the datasets used in the pipeline, including descriptions and formats.
 
 ## Getting Started
 
