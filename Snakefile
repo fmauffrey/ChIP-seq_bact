@@ -12,9 +12,10 @@ rule qc:
 
 # Rule to align reads on genome
 rule align:
-    message: "Starting the analysis pipeline"
+    message: "Starting reads alignment"
     input:
-        expand("results/{sample}/Align/{sample}.bam", sample=config["input_samples"])
+        expand("results/{sample}/Align/{sample}.bam", sample=config["input_samples"]),
+        expand("results/{sample}/Align/{sample}_phantompeak.txt", sample=config["input_samples"]),
 
 # Rule to call peaks
 rule call_peaks:
@@ -64,7 +65,6 @@ rule bowtie2_index:
     shell:
         "bowtie2-build {input} data/{ref_genome}/{ref_genome}"
 
-
 # Reads mapping with bowtie2
 rule bowtie2_align:
     message: "Bowtie2: {wildcards.sample}"
@@ -91,6 +91,17 @@ rule samtools_view:
     shell:
         "samtools view -bS {input} -o {output} && "
         "rm {input}"
+
+# ChIP-seq alignment quality control
+rule phantompeakqualtools:
+    message: "Phantompeakqualtools: {wildcards.sample}"
+    input: "results/{sample}/Align/{sample}.bam"
+    output: "results/{sample}/Align/{sample}_phantompeak.txt"
+    log: "results/{sample}/Align/{sample}_phantompeak.log"
+    container: "docker://seqeralabs/phantompeakqualtools"
+    threads: 2
+    shell:
+        "Rscript scripts/run_spp.R -c={input} -savp -out={output} 2> {log}"
 
 # Peak calling with MACS3
 rule macs3:

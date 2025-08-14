@@ -44,7 +44,7 @@ A too high coverage can lead to many peaks called and this can easily occur with
 
    q-value (adjusted with BH) is used for macs3 instead if p-value
 
-4. **Run the QC steps**:
+4. **Run the reads QC steps**:
    Execute the following command to start QC analysis:
    ```
    snakemake qc --cores <number-of-cores> --use-singularity
@@ -56,13 +56,13 @@ A too high coverage can lead to many peaks called and this can easily occur with
    ```
    snakemake align --cores <number-of-cores> --use-singularity
    ```
+   Pause and check the quality of the peaks quality (*_phantompeak.txt). If OK, proceed to next step. 
 
 6. **Run the peaks calling steps**:
    Execute the following command to start reads alignment:
    ```
    snakemake call_peaks --cores <number-of-cores> --use-singularity
    ```
-   Pause and check the quality of the peak calling quality with tools like IGV or packages like ChIPQC (in R). If OK, proceed to next step. 
 
 ## Additional Information
 
