@@ -10,7 +10,7 @@ This project is a Snakemake pipeline designed for the analysis of ChIP-seq data.
 - Comparison between samples (Deseq2)
 
 ## Other possible steps
-- Motif discovery (RSAT software, peak-motifs command) (MEME)
+- Motif discovery (RSAT software, peak-motifs command) (MEME) (Homer)
 - Comparison between peaks and known TFBS
 - Web app for exploring results
 
