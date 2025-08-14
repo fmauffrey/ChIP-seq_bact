@@ -7,8 +7,8 @@ reference_genome: ASM676v1
 fastp:
   qualified_quality_phred: 25
   unqualified_percent_limit: 40
-  average_qual: 0
-  length_limit: 0
+  average_qual: 20
+  min_length: 30
 macs3:
   qvalue: 0.01
   fragment_length: 200

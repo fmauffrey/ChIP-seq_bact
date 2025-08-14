@@ -38,10 +38,10 @@ rule fastp:
         qual = config["fastp"]["qualified_quality_phred"],
         unqual = config["fastp"]["unqualified_percent_limit"],
         ave_qual = config["fastp"]["average_qual"],
-        length = config["fastp"]["length_limit"]
+        min_length = config["fastp"]["min_length"]
     shell:
         "fastp -i {input} -o {output.fastq} -q {params.qual} -u {params.unqual} -e {params.ave_qual} "
-        "-l {params.length} -h {output.html} -j {output.json} 2> {log}"
+        "-l {params.min_length} -h {output.html} -j {output.json} 2> {log}"
 
 # Reads quality check with FastQC
 rule fastqc:

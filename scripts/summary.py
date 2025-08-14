@@ -20,9 +20,9 @@ def add_mean_coverage(summary):
         with open(fastqc_file, "r") as f:
             text = f.read()
             seq_nb_re = re.search(r'(?<=Total Sequences)\s+\d+', text)
-            seq_nb = seq_nb_re.lstrip() if seq_nb_re is not None else None
+            seq_nb = seq_nb_re.group().lstrip() if seq_nb_re is not None else None
             seq_len_re = re.search(r'(?<=Sequence length)\s+\d+', text)
-            seq_len = seq_len_re.lstrip() if seq_len_re is not None else None
+            seq_len = seq_len_re.group().lstrip() if seq_len_re is not None else None
             if seq_nb != None and seq_len != None:
                 mean_coverage = round((int(seq_len)*int(seq_nb))/snakemake.params.genome_size, 2)
             else:
