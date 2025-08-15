@@ -1,6 +1,6 @@
-# Data Documentation for Snakemake Pipeline
+# Files and formats
 
-This directory contains the data needed for the analysis. Keep a consistent name for the pipeline to find the correct files.
+This directory contains the data needed for the analysis. Put all files (samples, control, genome) in this folder. Keep a consistent name for the pipeline to find the correct files. A control sample is expected for noise reduction.
 
 ## Datasets
 
@@ -16,8 +16,8 @@ This directory contains the data needed for the analysis. Keep a consistent name
    - **Description**: annotation of the reference genome.
    - **Format**: GFF (.gff)
 
-4. **Experiment data**
-   - **Description**: the data files to analyze and the control sample.
+4. **Sample data**
+   - **Description**: the data files to analyze and the control sample. The pipeline has been designed for single-End sequencing data.
    - **Format**: Fastq (.fastq)
 
 ## Example
