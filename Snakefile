@@ -47,7 +47,7 @@ rule fastp:
 rule fastqc:
     message: "FastQC: {wildcards.sample}"
     input: "results/{sample}/QC/{sample}_fastp.fastq"
-    output: "results/{sample}/QC/{sample}_fastp_fastqc.html"
+    output: "results/{sample}/QC/{sample}_fastp_fastqc/fastqc_data.txt"
     container: "docker://staphb/fastqc"
     threads: 1
     shell:
