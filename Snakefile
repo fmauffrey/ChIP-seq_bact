@@ -8,7 +8,7 @@ rule qc:
     message: "Starting quality control and trimming"
     input:
         expand("results/{sample}/QC/{sample}_fastp.fastq", sample=config["input_samples"]),
-        expand("results/{sample}/QC/{sample}_fastp_fastqc.html", sample=config["input_samples"])
+        expand("results/{sample}/QC/{sample}_fastp_fastqc/fastqc_data.txt", sample=config["input_samples"])
 
 # Rule to align reads on genome
 rule align:
