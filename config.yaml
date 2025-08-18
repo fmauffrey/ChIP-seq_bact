@@ -1,8 +1,8 @@
 input_samples:
-  - GFY-6_R1_30x
-  - GFY-7_R1_30x
-  - GFY-8_R1_30x
-control: GFY-8_R1_30x
+  - Sample1
+  - Sample2
+  - Sample3
+control: Sample3
 reference_genome: ASM676v1
 fastp:
   qualified_quality_phred: 25
