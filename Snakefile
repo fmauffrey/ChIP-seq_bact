@@ -119,19 +119,19 @@ rule macs3:
         "--outdir results/{wildcards.sample}/Peaks --nomodel --extsize {params.frag_length} -f BAM -g {params.genome_size} "
         "-B -q {params.qvalue} 2> {log}"
 
-# Final summary
-rule summary:
-    message: "Generating summary"
+# Peaks calling summary
+rule peaks_summary:
+    message: "Generating Peaks calling summary"
     input:
         peaks_QC=expand("results/{sample}/Align/{sample}_phantompeak.txt", sample=config["input_samples"]),
         peaks=expand("results/{sample}/Peaks/{sample}_peaks.narrowPeak", sample=config["input_samples"]),
         bowtie2_log=expand("results/{sample}/Align/{sample}_bowtie2.log", sample=config["input_samples"]),
         fastqc_files=expand("results/{sample}/QC/{sample}_fastp_fastqc/fastqc_data.txt", sample=config["input_samples"])
     output: 
-        path="results/summary.txt"
+        path="results/peaks_summary.txt"
     threads: 1
     params:
         samples=config["input_samples"],
         genome_size=config["macs3"]["genome_size"]
     script:
-        "scripts/summary.py"
+        "scripts/peaks_summary.py"
