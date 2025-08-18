@@ -13,3 +13,5 @@ macs3:
   qvalue: 0.01
   fragment_length: 200
   genome_size: 6264404
+bedtools:
+  window_size: 1000

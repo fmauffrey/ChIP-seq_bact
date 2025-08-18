@@ -21,7 +21,13 @@ rule align:
 rule call_peaks:
     message: "Starting peak calling"
     input:
-        expand("results/{sample}/Peaks/{sample}_peaks.narrowPeak", sample=config["input_samples"])
+        expand("results/{sample}/Peaks/{sample}_summits.bed", sample=config["input_samples"])
+
+# Rule to annotate peaks
+rule annotate_peaks:
+    message: "Starting peak annotation"
+    input:
+        expand("results/{sample}/Annotations/{sample}_closest_genes.txt", sample=config["input_samples"])
 
 # Reads quality control with Fastp
 rule fastp:
@@ -106,7 +112,9 @@ rule phantompeakqualtools:
 rule macs3:
     message: "MACS3: {wildcards.sample}"
     input: "results/{sample}/Align/{sample}.bam"
-    output: "results/{sample}/Peaks/{sample}_peaks.narrowPeak"
+    output: 
+        peaks="results/{sample}/Peaks/{sample}_peaks.narrowPeak",
+        bed="results/{sample}/Peaks/{sample}_summits.bed"
     log: "results/{sample}/Peaks/{sample}_macs3.log"
     threads: 2
     params:
@@ -135,3 +143,17 @@ rule peaks_summary:
         genome_size=config["macs3"]["genome_size"]
     script:
         "scripts/peaks_summary.py"
+
+# Rule to find closest genes to peaks
+rule bedtools_window:
+    message: "Bedtools : {wildcards.sample}"
+    input: "results/{sample}/Peaks/{sample}_summits.bed",
+    output: "results/{sample}/Annotations/{sample}_closest_genes.txt"
+    log: "results/{sample}/Annotations/{sample}_closest_genes.log"
+    threads: 1
+    container: "docker://staphb/bedtools"
+    params:
+        genome=config["reference_genome"],
+        window=config["bedtools"]["window_size"]
+    shell:
+        "bedtools window -a {input} -b data/{params.genome}.gff -w {params.window} > {output} 2> {log}"
