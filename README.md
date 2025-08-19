@@ -44,21 +44,21 @@ This step identifies all genes located within a specified window around each pea
    conda activate chip-seq
    ```
 
-3. **Run the reads QC steps**:  
+3. **Reads QC**:  
    Execute the following command to start QC analysis:
    ```
    snakemake qc --cores <number-of-cores> --use-singularity
    ```
    Pause and check the quality of the filtered fastq files. If OK, proceed to next step.  
 
-4. **Run the alignment steps**:  
+4. **Reads alignment on genome**:  
    Execute the following command to start reads alignment:
    ```
    snakemake align --cores <number-of-cores> --use-singularity
    ```
    Pause and check the quality of the peaks quality (*_phantompeak.txt). If OK, proceed to next step. 
 
-5. **Run the peaks calling steps**:  
+5. **Peaks calling**:  
    Execute the following command to start peaks calling:
    ```
    snakemake call_peaks --cores <number-of-cores> --use-singularity
@@ -70,7 +70,7 @@ This step identifies all genes located within a specified window around each pea
    snakemake summary --cores <number-of-cores> --use-singularity
    ```
 
-7. **Annotate the peaks**
+7. **Peaks annotation**  
    Execute the following command to start peaks annotation:
    ```
    snakemake annotate_peaks --cores <number-of-cores> --use-singularity
