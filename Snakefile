@@ -27,7 +27,7 @@ rule call_peaks:
 rule annotate_peaks:
     message: "Starting peak annotation"
     input:
-        expand("results/{sample}/Annotations/{sample}_closest_genes.txt", sample=config["input_samples"])
+        expand("results/{sample}/Annotations/{sample}_closest_genes_summary.txt", sample=config["input_samples"])
 
 # Reads quality control with Fastp
 rule fastp:
@@ -114,7 +114,8 @@ rule macs3:
     input: "results/{sample}/Align/{sample}.bam"
     output: 
         peaks="results/{sample}/Peaks/{sample}_peaks.narrowPeak",
-        bed="results/{sample}/Peaks/{sample}_summits.bed"
+        bed="results/{sample}/Peaks/{sample}_summits.bed",
+        peaks_xls="results/{sample}/Peaks/{sample}_peaks.xls"
     log: "results/{sample}/Peaks/{sample}_macs3.log"
     threads: 2
     params:
@@ -157,3 +158,15 @@ rule bedtools_window:
         window=config["bedtools"]["window_size"]
     shell:
         "bedtools window -a {input} -b data/{params.genome}.gff -w {params.window} > {output} 2> {log}"
+
+# Rule to generate a summary of the closest genes
+rule closest_genes_summary:
+    message: "Closest genes summary: {wildcards.sample}"
+    input: 
+        closest_genes="results/{sample}/Annotations/{sample}_closest_genes.txt",
+        peaks_xls="results/{sample}/Peaks/{sample}_peaks.xls"
+    output: 
+        path="results/{sample}/Annotations/{sample}_closest_genes_summary.txt"
+    threads: 1
+    script:
+        "scripts/closest_genes_summary.py"
