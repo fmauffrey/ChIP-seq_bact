@@ -2,6 +2,7 @@
 configfile: "config.yaml"
 
 ref_genome = config["reference_genome"]
+control = config["control"]
 
 # Run quality control and trimming pipeline
 rule qc:
@@ -111,7 +112,9 @@ rule phantompeakqualtools:
 # Peak calling with MACS3
 rule macs3:
     message: "MACS3: {wildcards.sample}"
-    input: "results/{sample}/Align/{sample}.bam"
+    input: 
+        sample="results/{sample}/Align/{sample}.bam",
+        control="results/{ctl}/Align/{ctl}.bam".format(ctl=control)
     output: 
         peaks="results/{sample}/Peaks/{sample}_peaks.narrowPeak",
         bed="results/{sample}/Peaks/{sample}_summits.bed",
@@ -119,12 +122,11 @@ rule macs3:
     log: "results/{sample}/Peaks/{sample}_macs3.log"
     threads: 2
     params:
-        control=config["control"],
         genome_size=config["macs3"]["genome_size"],
         qvalue=config["macs3"]["qvalue"],
         frag_length=config["macs3"]["fragment_length"]
     shell:
-        "macs3 callpeak -t {input} -c results/{params.control}/Align/{params.control}.bam -n {wildcards.sample} "
+        "macs3 callpeak -t {input.sample} -c {input.control} -n {wildcards.sample} "
         "--outdir results/{wildcards.sample}/Peaks --nomodel --extsize {params.frag_length} -f BAM -g {params.genome_size} "
         "-B -q {params.qvalue} 2> {log}"
 

@@ -1,7 +1,6 @@
 input_samples:
   - Sample1
   - Sample2
-  - Sample3
 control: Sample3
 reference_genome: ASM676v1
 fastp:
