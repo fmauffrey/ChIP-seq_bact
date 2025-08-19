@@ -81,12 +81,29 @@ def add_peak_distance(table):
 
     return table
 
+def add_TSS_state(table):
+    """
+    Check if the peak location could be considered as a TSS (located upstream).
+    """
+    table["Potential TSS"] = np.where(
+        (table["Peak location"] < table["Gene start"]) & (table["Strand"] == "+"),
+        "Yes",
+        np.where(
+            (table["Peak location"] > table["Gene stop"]) & (table["Strand"] == "-"),
+            "Yes",
+            "No"
+        )
+    )
+
+    return table
+
 if __name__ == "__main__":
     # Load peaks table and filter useless information
     peaks_table = load_peaks_table(snakemake.input.peaks_xls)
     annotation_table = load_annotation_table(snakemake.input.closest_genes)
     merged_table = pd.merge(peaks_table, annotation_table, on="Name", how="inner")
-    final_table = add_peak_distance(merged_table)
+    merged_table = add_peak_distance(merged_table)
+    merged_table = add_TSS_state(merged_table)
 
     # Write table
-    final_table.to_csv(snakemake.output.path, index=False, sep="\t")
+    merged_table.to_csv(snakemake.output.path, index=False, sep="\t")
