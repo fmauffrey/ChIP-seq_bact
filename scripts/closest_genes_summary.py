@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import re
 
 def load_peaks_table(file_path):
     """
@@ -36,11 +37,12 @@ def load_annotation_table(file_path):
     annotation_table = open(file_path, "r").readlines()
     annotation_table = [x for x in annotation_table if "\tgene\t" in x]
 
-    name = [x.split("\t")[3] for x in annotation_table]
+    names = [x.split("\t")[3] for x in annotation_table]
     gene_start = [int(x.split("\t")[8]) for x in annotation_table]
     gene_stop = [int(x.split("\t")[9]) for x in annotation_table]
     strand = [x.split("\t")[11] for x in annotation_table]
     info = [x.split("\t")[13] for x in annotation_table]
+    products = []
 
     # Extract gene names
     gene_names = []
@@ -51,10 +53,22 @@ def load_annotation_table(file_path):
                 target_name = x.split("=")[1]
                 break
         gene_names.append(target_name)
+    
+    # Extract product names if possible
+    annotation_table = open(file_path, "r").read()
+    for name in gene_names:
+        pattern = re.compile(rf"\n.*\tCDS\t.*{name}.*\n", re.IGNORECASE)
+        match = pattern.search(annotation_table)
+        if match is not None:
+            product_name = re.search(r"(?<=product=).*?(?=;)", match.group())
+            products.append(product_name.group())
+        else:
+            products.append("NA")
 
     extracted_data = {
-        "Name": name,
+        "Name": names,
         "Gene name": gene_names,
+        "Products": products,
         "Gene start": gene_start,
         "Gene stop": gene_stop,
         "Strand": strand,
