@@ -3,7 +3,9 @@ import re
 
 
 def add_mapping_reads(summary):
-    # Extract the number of reads mapped to the genome
+    '''
+    Extract the number of reads mapped to the genome
+    '''
     summary["Mapping reads"] = []
     for bowtie2_log_file in snakemake.input.bowtie2_log:
         with open(bowtie2_log_file, "r") as f:
@@ -14,7 +16,9 @@ def add_mapping_reads(summary):
     return summary
 
 def add_mean_coverage(summary):
-    # Calculate the mean coverage based on genome size and reads number
+    '''
+    Calculate the mean coverage based on genome size and reads number
+    '''
     summary["Mean coverage"] = []
     for fastqc_file in snakemake.input.fastqc_files:
         with open(fastqc_file, "r") as f:
@@ -31,7 +35,9 @@ def add_mean_coverage(summary):
     return summary
 
 def add_phantompeak(summary):
-    # Extract alignments QC metrics and add them to summary
+    '''
+    Extract alignments QC metrics and add them to summary
+    '''
     summary["NSC"] = []
     summary["RSC"] = []
     summary["QualityTag"] = []
@@ -44,7 +50,9 @@ def add_phantompeak(summary):
     return summary
 
 def add_peaks(summary):
-    # Extract peaks metrics and add them to summary
+    '''
+    Extract peaks metrics and add them to summary
+    '''
     summary["Peaks_number"] = []
     for peaks_file in snakemake.input.peaks:
         with open(peaks_file, "r") as f:
