@@ -4,3 +4,4 @@ dependencies:
   - python=3.12
   - snakemake=7.32.4
   - singularity=3.8.6
+  - bedtools=2.31.1
