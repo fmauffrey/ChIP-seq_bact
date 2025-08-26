@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import argparse
 import pandas as pd
 import subprocess
@@ -12,16 +14,15 @@ def filter_peaks_file(args):
     peaks_table = [x for x in peaks_table if not x.startswith(("#", "\n", "chr\t"))]
 
     chr = [x.split("\t")[0].strip("\n") for x in peaks_table]
-    start = [int(x.split("\t")[1]) for x in peaks_table]
-    end = [int(x.split("\t")[2]) for x in peaks_table]
+    peaks_position = [int(x.split("\t")[4]) for x in peaks_table]
     pileup = [float(x.split("\t")[5]) for x in peaks_table]
     log10_qvalue = [float(x.split("\t")[8]) for x in peaks_table]
     peaks = [x.split("\t")[9].strip("\n") for x in peaks_table]
 
     extracted_data = {
         "Chromosome": chr,
-        "start": start,
-        "end": end,
+        "start": peaks_position,
+        "end": peaks_position,
         "Peak": peaks,
         "Pileup": pileup,
         "Log10 Q-value": log10_qvalue
