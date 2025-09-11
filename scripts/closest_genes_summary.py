@@ -97,11 +97,11 @@ def add_peak_distance(table):
 
     return table
 
-def add_TSS_state(table):
+def add_regulator_state(table):
     """
-    Check if the peak location could be considered as a TSS (located upstream).
+    Check if the peak location is in a potential regulation region (located upstream).
     """
-    table["Potential TSS"] = np.where(
+    table["Potential regulator"] = np.where(
         (table["Peak location"] < table["Gene start"]) & (table["Strand"] == "+"),
         "Yes",
         np.where(
