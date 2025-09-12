@@ -119,7 +119,7 @@ if __name__ == "__main__":
     annotation_table = load_annotation_table(snakemake.input.closest_genes)
     merged_table = pd.merge(peaks_table, annotation_table, on="Name", how="inner")
     merged_table = add_peak_distance(merged_table)
-    merged_table = add_TSS_state(merged_table)
+    merged_table = add_regulator_state(merged_table)
 
     # Write table
     merged_table.to_csv(snakemake.output.path, index=False, sep="\t")
