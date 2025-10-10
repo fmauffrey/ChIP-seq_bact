@@ -97,29 +97,12 @@ def add_peak_distance(table):
 
     return table
 
-def add_regulator_state(table):
-    """
-    Check if the peak location is in a potential regulation region (located upstream).
-    """
-    table["Potential regulator"] = np.where(
-        (table["Peak location"] < table["Gene start"]) & (table["Strand"] == "+"),
-        "Yes",
-        np.where(
-            (table["Peak location"] > table["Gene stop"]) & (table["Strand"] == "-"),
-            "Yes",
-            "No"
-        )
-    )
-
-    return table
-
 if __name__ == "__main__":
     # Load peaks table and filter useless information
     peaks_table = load_peaks_table(snakemake.input.peaks_xls)
     annotation_table = load_annotation_table(snakemake.input.closest_genes)
     merged_table = pd.merge(peaks_table, annotation_table, on="Name", how="inner")
     merged_table = add_peak_distance(merged_table)
-    merged_table = add_regulator_state(merged_table)
 
     # Write table
     merged_table.to_csv(snakemake.output.path, index=False, sep="\t")
