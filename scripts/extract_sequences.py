@@ -37,7 +37,7 @@ def filter_peaks_file(args):
     df["end"] = df["end"] + int(args.length/2)
     df["start"] = df["start"] - int(args.length/2)
 
-        return [bed]
+    return [bed]
 
 def run_bedtools(args, bed):
     '''
