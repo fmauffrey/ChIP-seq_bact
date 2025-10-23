@@ -82,16 +82,31 @@ def load_annotation_table(file_path):
 
 def add_peak_distance(table):
     """
-    Calculate the distance between a peak and a gene.
-    Return 0 if the peak is located on the gene
+    Calculate the absolute distance between a peak and a gene start codon.
+    Return the relative location of the peak to the gene.
     """
-    table["Peak distance"] = np.where(
-        table["Peak location"] < table["Gene start"],
-        table["Gene start"] - table["Peak location"],
-        np.where(
-            table["Peak location"] > table["Gene stop"],
-            table["Peak location"] - table["Gene stop"],
-            0  # Peak is within the gene range
+
+    table["Peak distance"] = np.absolute(np.subtract(table["Peak location"], table["Gene start"]))
+
+    peak = "Peak location"
+    start = "Gene start"
+    stop = "Gene stop"
+
+    table["Relative location"] = np.where(
+        table["Strand"] == "-",
+        np.select(
+            [(table[peak] >= table[start]) & (table[peak] <= table[stop]),
+              table[peak] < table[stop],
+              table[peak] > table[start]],
+            ["Within gene", "Downstream", "Upstream"],
+            default="NA"
+        ),
+        np.select(
+            [(table[peak] >= table[start]) & (table[peak] <= table[stop]),
+              table[peak] < table[start],
+              table[peak] > table[stop]],
+            ["Within gene", "Upstream", "Downstream"],
+            default="NA"
         )
     )
 
