@@ -14,3 +14,6 @@ macs3:
   genome_size: 6264404
 bedtools:
   window_size: 1000
+probable_regulation:
+  within_gene_threshold: 100
+  upstream_threshold: 600

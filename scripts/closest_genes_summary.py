@@ -80,18 +80,20 @@ def load_annotation_table(file_path):
 
     return df
 
-def add_peak_distance(table):
+def add_peak_distance(table, within_gene_threshold, upstream_threshold):
     """
     Calculate the absolute distance between a peak and a gene start codon.
     Return the relative location of the peak to the gene.
     """
 
-    table["Peak distance"] = np.absolute(np.subtract(table["Peak location"], table["Gene start"]))
-
     peak = "Peak location"
     start = "Gene start"
     stop = "Gene stop"
 
+    # New comumn with distance between peak and gene start
+    table["Peak distance"] = np.absolute(np.subtract(table[peak], table[start]))
+
+    # New column with relative location of peak to gene
     table["Relative location"] = np.where(
         table["Strand"] == "-",
         np.select(
@@ -110,6 +112,19 @@ def add_peak_distance(table):
         )
     )
 
+    # New column with probable regulation effect of the transcription factor on the gene
+    dist_to_start_abs = np.abs(table[peak] - table[start])
+    dist_upstream = np.where(
+        table["Strand"] == "+",
+        table[start] - table[peak],   # for '+' upstream means peak < start
+        table[peak] - table[start]    # for '-' upstream means peak > start
+    )
+
+    cond_within = (table["Relative location"] == "Within gene") & (dist_to_start_abs <= within_gene_threshold)
+    cond_upstream = (table["Relative location"] == "Upstream") & (dist_upstream <= upstream_threshold) & (dist_upstream >= 0)
+
+    table["Probable regulation"] = np.where(cond_within | cond_upstream, "Yes", "No")
+
     return table
 
 if __name__ == "__main__":
@@ -117,7 +132,7 @@ if __name__ == "__main__":
     peaks_table = load_peaks_table(snakemake.input.peaks_xls)
     annotation_table = load_annotation_table(snakemake.input.closest_genes)
     merged_table = pd.merge(peaks_table, annotation_table, on="Name", how="inner")
-    merged_table = add_peak_distance(merged_table)
+    merged_table = add_peak_distance(merged_table, snakemake.params.within_gene_threshold, snakemake.params.upstream_threshold)
 
     # Write table
     merged_table.to_csv(snakemake.output.path, index=False, sep="\t")

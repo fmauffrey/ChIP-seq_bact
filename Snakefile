@@ -169,6 +169,9 @@ rule closest_genes_summary:
         peaks_xls="results/{sample}/Peaks/{sample}_peaks.xls"
     output: 
         path="results/{sample}/Annotations/{sample}_closest_genes_summary.txt"
+    params:
+        within_gene_threshold=config["probable_regulation"]["within_gene_threshold"],
+        upstream_threshold=config["probable_regulation"]["upstream_threshold"]
     threads: 1
     script:
         "scripts/closest_genes_summary.py"

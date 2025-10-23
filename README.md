@@ -24,6 +24,7 @@ This step identifies all genes located within a specified window around each pea
 - **fastp** : the different parameters for the fastp filtering step.
 - **macs3** : the different parameters for the macs3 peak calling step. These parameters should be adapted according to your experiment. In this pipeline, the --nomodel option is used to allow macs3 to call peaks, therefore the --extsize parameter is required.
 - **bedtools** : the window parameter for the peak annotation step. 
+- **probable_regulation** : the window distance between the peak location and the transcription starting site to consider the transcription factor as a potential regulator of this gene.
 
 ## Getting Started
 
