@@ -37,6 +37,9 @@ def filter_peaks_file(args):
     df["end"] = df["end"] + int(args.length/2)
     df["start"] = df["start"] - int(args.length/2)
 
+    bed = re.sub(".xls", f"_q{args.qvalue}_e{args.fold}.bed", args.peaks)
+    df.to_csv(bed, sep="\t", header=False, index=False)
+
     return [bed]
 
 def run_bedtools(args, bed):
@@ -62,6 +65,7 @@ if __name__ == "__main__":
     parser.add_argument("-l", "--length", type=int, help="length of the extracted fragment", dest="length", default=100)
     parser.add_argument("-q", "--qvalue", type=int, help="log10 qvalue threshold to keep a peak", dest="qvalue", default=0)
     parser.add_argument("-e", "--enrichment", type=int, help="fold enrichment threshold to keep a peak", dest="fold", default=0)
+    parser.add_argument("--pileup", type=float, help="if specified, creates two BED files by splitting peaks based on their pileup value", dest="pileup", default=None)
     args = parser.parse_args()
 
     # Determine name for the generated bed file
